@@ -1,0 +1,344 @@
+{
+  "visits": [
+    {
+      "id": "RTL_00001",
+      "name": "Retailer 0001",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside",
+      "tehsil": "Patna_T012",
+      "sales30d": "\u20b985,200",
+      "daysCover": 317,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_00994",
+      "name": "Retailer 0994",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Karnal_T039",
+      "sales30d": "\u20b985,200",
+      "daysCover": 336,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03056",
+      "name": "Retailer 3056",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Rajkot_T092",
+      "sales30d": "\u20b985,200",
+      "daysCover": 327,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_00762",
+      "name": "Retailer 0762",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Meerut_T026",
+      "sales30d": "\u20b9105,900",
+      "daysCover": 317,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_00158",
+      "name": "Retailer 0158",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Ujjain_T008",
+      "sales30d": "\u20b9119,250",
+      "daysCover": 317,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_01369",
+      "name": "Retailer 1369",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Bikaner_T050",
+      "sales30d": "\u20b9124,950",
+      "daysCover": 317,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03734",
+      "name": "Retailer 3734",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Ratlam_T150",
+      "sales30d": "\u20b9100,500",
+      "daysCover": 271,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03972",
+      "name": "Retailer 3972",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Hisar_T143",
+      "sales30d": "\u20b991,650",
+      "daysCover": 184,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03973",
+      "name": "Retailer 3973",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Hisar_T146",
+      "sales30d": "\u20b9113,550",
+      "daysCover": 396,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03974",
+      "name": "Retailer 3974",
+      "type": "Retailer",
+      "priority": "Medium",
+      "reason": "High Sales Upside",
+      "tehsil": "Hisar_T142",
+      "sales30d": "\u20b944,550",
+      "daysCover": 413,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Cross-sell opportunity",
+        "roi": "\u20b922,000 Expected",
+        "talkingPoints": [
+          "Competitor volume high",
+          "Offer bundle"
+        ],
+        "tags": [
+          "COMPETITOR_SWITCH"
+        ]
+      }
+    },
+    {
+      "id": "GRW_00001",
+      "name": "Grower 0001",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "Critical Stage - Flowering",
+      "tehsil": "Local",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Disease protection",
+        "roi": "Protect 15% yield",
+        "talkingPoints": [
+          "Critical stage for fungal infection"
+        ],
+        "tags": [
+          "CRITICAL_STAGE"
+        ]
+      }
+    },
+    {
+      "id": "GRW_00002",
+      "name": "Grower 0002",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "Critical Stage - Vegetative",
+      "tehsil": "Local",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control",
+        "roi": "Protect 15% yield",
+        "talkingPoints": [
+          "Recent pest sightings"
+        ],
+        "tags": [
+          "PEST_ALERT"
+        ]
+      }
+    },
+    {
+      "id": "GRW_00003",
+      "name": "Grower 0003",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "Critical Stage - Flowering",
+      "tehsil": "Local",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Disease protection",
+        "roi": "Protect 15% yield",
+        "talkingPoints": [
+          "Critical stage for fungal infection"
+        ],
+        "tags": [
+          "CRITICAL_STAGE"
+        ]
+      }
+    },
+    {
+      "id": "GRW_00004",
+      "name": "Grower 0004",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "Critical Stage - Vegetative",
+      "tehsil": "Local",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control",
+        "roi": "Protect 15% yield",
+        "talkingPoints": [
+          "Recent pest sightings"
+        ],
+        "tags": [
+          "PEST_ALERT"
+        ]
+      }
+    },
+    {
+      "id": "GRW_00005",
+      "name": "Grower 0005",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "Critical Stage - Flowering",
+      "tehsil": "Local",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Disease protection",
+        "roi": "Protect 15% yield",
+        "talkingPoints": [
+          "Critical stage for fungal infection"
+        ],
+        "tags": [
+          "CRITICAL_STAGE"
+        ]
+      }
+    }
+  ],
+  "dashboard": {
+    "sales_vs_target": "94%",
+    "avg_rev": "\u20b975,500",
+    "coverage": "91%",
+    "nba_acc": "68%"
+  },
+  "alerts": [
+    {
+      "title": "Demand Spike vs Low POS",
+      "severity": "High",
+      "desc": "High digital engagement for Actara in Pune tehsil but low POS conversion. Reprioritize nearby retailers to capture demand.",
+      "affected": "12 Retailers"
+    },
+    {
+      "title": "Pest Risk (Early Blight)",
+      "severity": "Medium",
+      "desc": "Favorable weather conditions for early blight in Nashik. System has updated NBA to recommend Amistar Top.",
+      "affected": "45 Growers"
+    }
+  ]
+}
