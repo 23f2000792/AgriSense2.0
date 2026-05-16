@@ -66,6 +66,25 @@ body {
   flex-direction: column;
 }
 
+.mobile-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  background-color: var(--color-background);
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+.glass-nav {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  z-index: 50;
+}
+
 /* Glass Header */
 .header {
   background: rgba(15, 23, 42, 0.6);

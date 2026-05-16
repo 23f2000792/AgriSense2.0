@@ -6,7 +6,8 @@ import os
 import shutil
 
 is_vercel = os.environ.get("VERCEL") == "1"
-db_path = "./agrisense.db"
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+db_path = os.path.join(root_dir, "agrisense.db")
 
 if is_vercel:
     # Copy the committed DB to /tmp to allow read/write operations during the serverless lifecycle

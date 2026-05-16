@@ -6,6 +6,7 @@ export default function Chatbot() {
     { role: 'ai', content: 'Hi there! I am Vasudev.ai, your Syngenta Field Co-Pilot. Need insights on products or today\'s visits?' }
   ]);
   const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -14,14 +15,15 @@ export default function Chatbot() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isTyping]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isTyping) return;
     
     const userMsg = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setIsTyping(true);
     
     try {
       const res = await fetch('/api/chat', {
@@ -33,6 +35,8 @@ export default function Chatbot() {
       setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
     } catch (err) {
       setMessages(prev => [...prev, { role: 'ai', content: "Sorry, I couldn't reach the backend. Ensure FastAPI is running." }]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -82,6 +86,18 @@ export default function Chatbot() {
                 {msg.content}
               </div>
             ))}
+            {isTyping && (
+              <div style={{
+                alignSelf: 'flex-start',
+                background: 'rgba(0, 166, 90, 0.2)',
+                border: '1px solid rgba(0, 166, 90, 0.3)',
+                padding: '10px 14px', borderRadius: '12px',
+                borderBottomLeftRadius: '2px',
+                fontSize: '0.9rem', color: '#f8fafc', fontStyle: 'italic'
+              }}>
+                Vasudev.ai is typing...
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
