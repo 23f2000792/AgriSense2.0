@@ -5,9 +5,9 @@ from datetime import datetime
 import os
 import shutil
 
-is_vercel = os.environ.get("VERCEL") == "1"
-root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-db_path = os.path.join(root_dir, "agrisense.db")
+is_vercel = os.environ.get("VERCEL") == "1" or os.environ.get("VERCEL_ENV") is not None
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(backend_dir, "agrisense.db")
 
 if is_vercel:
     # Copy the committed DB to /tmp to allow read/write operations during the serverless lifecycle
