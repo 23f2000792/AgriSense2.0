@@ -1,0 +1,589 @@
+{
+  "visits": [
+    {
+      "id": "RTL_01001",
+      "name": "Retailer 1001",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Muzaffarpur_T031",
+      "sales30d": "\u20b9102,750",
+      "daysCover": 325,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b915,412 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03970",
+      "name": "Retailer 3970",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Patna_T163",
+      "sales30d": "\u20b9109,050",
+      "daysCover": 307,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b916,357 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_01951",
+      "name": "Retailer 1951",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Akola_T086",
+      "sales30d": "\u20b991,800",
+      "daysCover": 414,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b913,770 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_01952",
+      "name": "Retailer 1952",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Sirsa_T082",
+      "sales30d": "\u20b9118,500",
+      "daysCover": 229,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b917,775 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03973",
+      "name": "Retailer 3973",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Hisar_T146",
+      "sales30d": "\u20b9113,550",
+      "daysCover": 396,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b917,032 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_01063",
+      "name": "Retailer 1063",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Hisar_T045",
+      "sales30d": "\u20b9155,700",
+      "daysCover": 251,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b923,355 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03975",
+      "name": "Retailer 3975",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Hisar_T144",
+      "sales30d": "\u20b9130,800",
+      "daysCover": 239,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b919,620 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03090",
+      "name": "Retailer 3090",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Vijayapura_T114",
+      "sales30d": "\u20b9110,700",
+      "daysCover": 273,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b916,605 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03091",
+      "name": "Retailer 3091",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Vijayapura_T109",
+      "sales30d": "\u20b995,700",
+      "daysCover": 387,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b914,355 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_01797",
+      "name": "Retailer 1797",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Karnal_T073",
+      "sales30d": "\u20b996,300",
+      "daysCover": 434,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b914,445 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03979",
+      "name": "Retailer 3979",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Varanasi_T156",
+      "sales30d": "\u20b9114,750",
+      "daysCover": 376,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b917,212 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03980",
+      "name": "Retailer 3980",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Varanasi_T155",
+      "sales30d": "\u20b9124,050",
+      "daysCover": 186,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b918,607 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03092",
+      "name": "Retailer 3092",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Vijayapura_T118",
+      "sales30d": "\u20b999,450",
+      "daysCover": 362,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b914,917 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03096",
+      "name": "Retailer 3096",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Vijayapura_T110",
+      "sales30d": "\u20b9103,800",
+      "daysCover": 403,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b915,570 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "RTL_03098",
+      "name": "Retailer 3098",
+      "type": "Retailer",
+      "priority": "High",
+      "reason": "High Sales Upside & Velocity",
+      "tehsil": "Vijayapura_T109",
+      "sales30d": "\u20b990,750",
+      "daysCover": 453,
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Volume Expansion",
+        "roi": "\u20b913,612 Expected",
+        "talkingPoints": [
+          "High recent transaction volume",
+          "Offer bulk discount"
+        ],
+        "tags": [
+          "UPSIDE",
+          "VOLUME"
+        ]
+      }
+    },
+    {
+      "id": "GRW_01629",
+      "name": "Grower 1629",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Tillering",
+      "tehsil": "Karnal_T070",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 102% yield",
+        "talkingPoints": [
+          "Critical for Wheat during Tillering stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_03997",
+      "name": "Grower 3997",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Tillering",
+      "tehsil": "Patiala_T052",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 101% yield",
+        "talkingPoints": [
+          "Critical for Wheat during Tillering stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_01956",
+      "name": "Grower 1956",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Tillering",
+      "tehsil": "Hisar_T025",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 95% yield",
+        "talkingPoints": [
+          "Critical for Wheat during Tillering stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_03665",
+      "name": "Grower 3665",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Vegetative",
+      "tehsil": "Varanasi_T097",
+      "crop": "Potato",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 84% yield",
+        "talkingPoints": [
+          "Critical for Potato during Vegetative stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_03581",
+      "name": "Grower 3581",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Tillering",
+      "tehsil": "Bardhaman_T119",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 74% yield",
+        "talkingPoints": [
+          "Critical for Wheat during Tillering stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_02462",
+      "name": "Grower 2462",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Vegetative",
+      "tehsil": "Kalaburagi_T122",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 73% yield",
+        "talkingPoints": [
+          "Critical for Wheat during Vegetative stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_01121",
+      "name": "Grower 1121",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Pod_formation",
+      "tehsil": "Agra_T059",
+      "crop": "Chickpea",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 69% yield",
+        "talkingPoints": [
+          "Critical for Chickpea during Pod_formation stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_01368",
+      "name": "Grower 1368",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Pod_formation",
+      "tehsil": "Bathinda_T162",
+      "crop": "Chickpea",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 65% yield",
+        "talkingPoints": [
+          "Critical for Chickpea during Pod_formation stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_04040",
+      "name": "Grower 4040",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Flowering",
+      "tehsil": "Meerut_T035",
+      "crop": "Mustard",
+      "nba": {
+        "product": "Amistar Top",
+        "objective": "Disease protection",
+        "roi": "Protect 64% yield",
+        "talkingPoints": [
+          "Critical for Mustard during Flowering stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    },
+    {
+      "id": "GRW_00969",
+      "name": "Grower 0969",
+      "type": "Grower",
+      "priority": "High",
+      "reason": "High Potential - Tillering",
+      "tehsil": "Patna_T022",
+      "crop": "Wheat",
+      "nba": {
+        "product": "Karate Zeon",
+        "objective": "Pest control & Growth",
+        "roi": "Protect 62% yield",
+        "talkingPoints": [
+          "Critical for Wheat during Tillering stage",
+          "High engagement on last WhatsApp campaign"
+        ],
+        "tags": [
+          "CRITICAL_STAGE",
+          "ENGAGED"
+        ]
+      }
+    }
+  ],
+  "dashboard": {
+    "sales_vs_target": "96%",
+    "avg_rev": "\u20b981,511",
+    "coverage": "94%",
+    "nba_acc": "72%"
+  },
+  "alerts": [
+    {
+      "title": "Anomaly Detected: Rapid Stock Depletion",
+      "severity": "High",
+      "desc": "ML model predicts 12 retailers in your territory will stock out of Score 250 EC in the next 48 hours based on POS velocity.",
+      "affected": "12 Retailers"
+    },
+    {
+      "title": "Campaign ROI Opportunity",
+      "severity": "Medium",
+      "desc": "24 growers recently engaged with the Amistar WhatsApp campaign but have not been visited. High conversion probability.",
+      "affected": "24 Growers"
+    }
+  ]
+}
