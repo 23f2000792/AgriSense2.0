@@ -9,6 +9,8 @@ function App() {
   const [appData, setAppData] = useState({ visits: [], dashboard: {}, alerts: [], products: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanResult, setScanResult] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -126,6 +128,70 @@ function App() {
           <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Products</span>
         </button>
       </nav>
+
+      {/* Floating Crop Scanner */}
+      <div 
+        onClick={() => {
+          setIsScanning(true);
+          setTimeout(() => {
+            setScanResult({ disease: "Early Blight Detected", confidence: "94%", product: "Amistar Top" });
+            setIsScanning(false);
+          }, 3000);
+        }}
+        style={{
+          position: 'fixed', bottom: '20px', left: '20px', zIndex: 1000,
+          width: '60px', height: '60px', borderRadius: '50%',
+          background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 4px 15px rgba(239,68,68,0.4)', cursor: 'pointer',
+          border: '2px solid rgba(255,255,255,0.2)'
+        }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+      </div>
+
+      {/* Crop Scanner Modal */}
+      {(isScanning || scanResult) && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.9)', zIndex: 2000,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '2rem'
+        }} onClick={() => { if(scanResult) setScanResult(null); }}>
+          
+          {isScanning ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ width: '250px', height: '250px', border: '2px solid #ef4444', borderRadius: '20px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: '#ef4444', animation: 'scan 1.5s infinite linear', boxShadow: '0 0 10px #ef4444' }}></div>
+              </div>
+              <h3 className="mt-4 font-bold pulse-animation" style={{ color: '#fff', fontSize: '1.25rem' }}>Analyzing Crop Image...</h3>
+              <p className="text-muted">Connecting to Vision AI Model</p>
+            </div>
+          ) : (
+            <div className="card" style={{ width: '100%', maxWidth: '350px', background: 'linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(15, 23, 42, 0.9))', border: '1px solid rgba(239, 68, 68, 0.3)' }} onClick={e => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', color: '#fca5a5' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <h3 className="font-extrabold" style={{ fontSize: '1.25rem', margin: 0 }}>Analysis Complete</h3>
+              </div>
+              
+              <div className="mb-4">
+                <div className="text-sm text-muted mb-1">Detected Issue</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff' }}>{scanResult.disease}</div>
+                <div className="text-sm font-bold mt-1" style={{ color: '#fca5a5' }}>Confidence: {scanResult.confidence}</div>
+              </div>
+              
+              <div style={{ background: 'rgba(0, 166, 90, 0.15)', border: '1px solid rgba(0, 166, 90, 0.3)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem' }}>
+                <div className="text-sm font-bold text-success mb-1">Next Best Action</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>Apply {scanResult.product}</div>
+              </div>
+              
+              <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setScanResult(null)}>
+                Close
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Floating Chatbot */}
       <Chatbot />

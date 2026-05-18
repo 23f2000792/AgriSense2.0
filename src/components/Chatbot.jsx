@@ -30,6 +30,15 @@ export default function Chatbot() {
       });
       const data = await res.json();
       setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
+      
+      // Native Text-to-Speech
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(data.response);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+      
     } catch (err) {
       setMessages(prev => [...prev, { role: 'ai', content: "Sorry, I couldn't reach the backend. Ensure FastAPI is running." }]);
     } finally {
