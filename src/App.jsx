@@ -4,14 +4,24 @@ import ManagerDashboard from './components/ManagerDashboard';
 import Chatbot from './components/Chatbot';
 import ProductCatalog from './components/ProductCatalog';
 import Performance from './components/Performance';
+import AuthScreen from './components/AuthScreen';
 
 function App() {
+  const [userRole, setUserRole] = useState(null); // 'rep' or 'mgr'
+  const [userProfile, setUserProfile] = useState(null);
+  
   const [activeTab, setActiveTab] = useState('rep');
   const [appData, setAppData] = useState({ visits: [], dashboard: {}, alerts: [], products: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
+
+  const handleLogin = (role, profile) => {
+    setUserRole(role);
+    setUserProfile(profile);
+    setActiveTab(role === 'mgr' ? 'mgr' : 'rep');
+  };
 
   const fetchData = async () => {
     try {
@@ -60,6 +70,10 @@ function App() {
     }));
   };
 
+  if (!userRole) {
+    return <AuthScreen onLogin={handleLogin} />;
+  }
+
   if (error) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444', fontFamily: 'Inter, sans-serif' }}>
@@ -89,11 +103,11 @@ function App() {
           </div>
           <div>
             <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1 }}>AgriSense</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--color-success)', fontWeight: 700, letterSpacing: '1px' }}>CO-PILOT AI</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--color-success)', fontWeight: 700, letterSpacing: '1px' }}>{userProfile.id} • {userProfile.name}</div>
           </div>
         </div>
-        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--color-surface)', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }}>
-          <img src="https://i.pravatar.cc/100?img=33" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--color-surface)', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', cursor: 'pointer' }} onClick={() => setUserRole(null)}>
+          <img src={`https://i.pravatar.cc/100?u=${userProfile.id}`} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
       </header>
 
@@ -110,20 +124,26 @@ function App() {
 
       {/* Bottom Navigation */}
       <nav className="glass-nav" style={{ display: 'flex', padding: '0.75rem 0.5rem', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-        <button 
-          onClick={() => setActiveTab('rep')}
-          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'rep' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Plan</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('mgr')}
-          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'mgr' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Overview</span>
-        </button>
+        {userRole === 'rep' && (
+          <button 
+            onClick={() => setActiveTab('rep')}
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'rep' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Plan</span>
+          </button>
+        )}
+        
+        {userRole === 'mgr' && (
+          <button 
+            onClick={() => setActiveTab('mgr')}
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'mgr' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Dashboard</span>
+          </button>
+        )}
+
         <button 
           onClick={() => setActiveTab('catalog')}
           style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'catalog' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
@@ -131,13 +151,16 @@ function App() {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
           <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Products</span>
         </button>
-        <button 
-          onClick={() => setActiveTab('perf')}
-          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'perf' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Stats</span>
-        </button>
+
+        {userRole === 'rep' && (
+          <button 
+            onClick={() => setActiveTab('perf')}
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'perf' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Stats</span>
+          </button>
+        )}
       </nav>
 
       {/* Floating Crop Scanner */}
