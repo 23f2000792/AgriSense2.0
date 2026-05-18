@@ -183,8 +183,28 @@ export default function RepApp({ visits, onVisitLogged }) {
                     </div>
                   )}
                   {visit.type === 'Grower' && (
-                    <div className="flex-row gap-4 mt-3 text-sm text-muted" style={{ background: 'rgba(0,0,0,0.2)', padding: '0.75rem', borderRadius: '8px' }}>
-                      <div>Crop: <span className="font-bold" style={{ color: '#fff' }}>{visit.crop}</span></div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.75rem' }}>
+                      <div style={{ background: 'rgba(255,255,255,0.05)', padding: '0.75rem', borderRadius: '8px' }}>
+                        <div className="text-muted" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '4px' }}>Crop & Stage</div>
+                        <div className="font-bold text-white" style={{ fontSize: '0.9rem' }}>{visit.crop || 'Tomato'} (Pod Formation)</div>
+                        <div style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '2px', fontWeight: 600 }}>NDVI Anomaly Detected</div>
+                      </div>
+                      <div style={{ background: 'rgba(255,255,255,0.05)', padding: '0.75rem', borderRadius: '8px' }}>
+                        <div className="text-muted" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '4px' }}>Demographics</div>
+                        <div className="font-bold text-white" style={{ fontSize: '0.9rem' }}>8.5 Acres</div>
+                        <div style={{ color: '#cbd5e1', fontSize: '0.75rem', marginTop: '2px' }}>Language: Marathi</div>
+                      </div>
+                      <div style={{ background: 'rgba(255,255,255,0.05)', padding: '0.75rem', borderRadius: '8px', gridColumn: '1 / -1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div className="text-muted" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '4px' }}>Digital Signals</div>
+                          <div className="font-bold text-white" style={{ fontSize: '0.85rem' }}>WhatsApp Campaign: <span style={{ color: '#6ee7b7' }}>Opened (3d ago)</span></div>
+                          <div className="font-bold text-white" style={{ fontSize: '0.85rem', marginTop: '2px' }}>Last Scan: <span style={{ color: '#fcd34d' }}>Amistar Top (14d ago)</span></div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#60a5fa' }}>85%</div>
+                          <div className="text-muted" style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700 }}>Conversion Prob.</div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
