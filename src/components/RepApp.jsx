@@ -189,6 +189,30 @@ export default function RepApp({ visits, onVisitLogged }) {
                   )}
                 </div>
 
+                {/* AI Priority Breakdown Model Visualization */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div className="text-sm font-bold mb-2" style={{ color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    AI Priority Breakdown
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(0,0,0,0.2)', padding: '0.75rem', borderRadius: '8px' }}>
+                    {[
+                      { label: 'Value Potential', w: visit.priority === 'High' ? '40%' : '20%', c: '#60a5fa' },
+                      { label: 'Risk (Stock-out/Agronomic)', w: visit.priority === 'High' ? '30%' : '15%', c: '#ef4444' },
+                      { label: 'Opportunity (Digital Pull)', w: visit.priority === 'High' ? '20%' : '45%', c: '#f59e0b' },
+                      { label: 'Coverage Urgency', w: visit.priority === 'High' ? '10%' : '20%', c: '#6ee7b7' }
+                    ].map(score => (
+                      <div key={score.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '120px', fontSize: '0.7rem', color: '#cbd5e1' }}>{score.label}</div>
+                        <div style={{ flex: 1, height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ width: score.w, height: '100%', background: score.c }}></div>
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#fff', fontWeight: 600, width: '25px', textAlign: 'right' }}>{score.w}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div style={{ 
                   background: 'linear-gradient(145deg, rgba(0, 166, 90, 0.15) 0%, rgba(0, 90, 140, 0.1) 100%)', 
                   padding: '1.25rem', borderRadius: '16px', marginBottom: '1.5rem',
