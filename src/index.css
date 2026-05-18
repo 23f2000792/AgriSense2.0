@@ -264,3 +264,28 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* Radial Progress Chart */
+.radial-progress {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.radial-progress::before {
+  content: "";
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  background: var(--color-bg);
+  border-radius: 50%;
+}
+.radial-progress-text {
+  position: relative;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #fff;
+}
+

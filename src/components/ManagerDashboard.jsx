@@ -41,15 +41,23 @@ export default function ManagerDashboard({ dashboard, alerts }) {
         </div>
         
         <div className="card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
-          <div className="text-muted text-sm font-bold mb-1 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem' }}>High Pri Coverage</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0' }}>{dashboard.coverage}</div>
-          <div className="text-sm font-bold" style={{ color: '#fcd34d' }}>Target: 95%</div>
+          <div className="text-muted text-sm font-bold mb-3 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem' }}>High Pri Coverage</div>
+          <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
+            <div className="radial-progress" style={{ background: `conic-gradient(#fcd34d ${dashboard.coverage}, rgba(255,255,255,0.05) 0)` }}>
+              <span className="radial-progress-text">{dashboard.coverage}</span>
+            </div>
+            <div className="text-sm font-bold text-right" style={{ color: '#fcd34d' }}>Target: 95%<br/><span style={{fontSize:'0.75rem', color: '#94a3b8'}}>Needs Focus</span></div>
+          </div>
         </div>
         
         <div className="card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'linear-gradient(145deg, rgba(0, 166, 90, 0.15), rgba(0, 90, 140, 0.1))', border: '1px solid rgba(0, 166, 90, 0.2)' }}>
-          <div className="text-muted text-sm font-bold mb-1 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem', color: '#6ee7b7' }}>NBA Acceptance</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0', color: '#fff' }}>{dashboard.nba_acc}</div>
-          <div className="text-sm font-bold" style={{ color: 'var(--color-success)' }}>+8% WoW</div>
+          <div className="text-muted text-sm font-bold mb-3 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem', color: '#6ee7b7' }}>NBA Acceptance</div>
+          <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
+            <div className="radial-progress" style={{ background: `conic-gradient(#6ee7b7 ${dashboard.nba_acc}, rgba(255,255,255,0.05) 0)` }}>
+              <span className="radial-progress-text">{dashboard.nba_acc}</span>
+            </div>
+            <div className="text-sm font-bold text-right" style={{ color: 'var(--color-success)' }}>+8% WoW<br/><span style={{fontSize:'0.75rem', color: '#94a3b8'}}>Excellent</span></div>
+          </div>
         </div>
       </div>
 

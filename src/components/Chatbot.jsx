@@ -17,19 +17,16 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages, isOpen, isTyping]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
-    
-    const userMsg = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+  const submitDirectMessage = async (msg) => {
+    if (isTyping) return;
+    setMessages(prev => [...prev, { role: 'user', content: msg }]);
     setIsTyping(true);
     
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg })
+        body: JSON.stringify({ message: msg })
       });
       const data = await res.json();
       setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
@@ -38,6 +35,13 @@ export default function Chatbot() {
     } finally {
       setIsTyping(false);
     }
+  };
+
+  const handleSend = async () => {
+    if (!input.trim() || isTyping) return;
+    const userMsg = input.trim();
+    setInput('');
+    submitDirectMessage(userMsg);
   };
 
   return (
@@ -101,7 +105,13 @@ export default function Chatbot() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div style={{ padding: '10px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: '8px' }}>
+          <div style={{ padding: '0 10px 10px 10px', display: 'flex', gap: '8px', overflowX: 'auto', whiteSpace: 'nowrap', scrollbarWidth: 'none' }}>
+            <span onClick={() => { const msg = 'Which visits are highest priority?'; setInput(msg); setTimeout(() => { setInput(''); submitDirectMessage(msg); }, 50); }} style={{ background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '12px', fontSize: '0.8rem', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>Highest Priority?</span>
+            <span onClick={() => { const msg = 'Any pests reported today?'; setInput(msg); setTimeout(() => { setInput(''); submitDirectMessage(msg); }, 50); }} style={{ background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '12px', fontSize: '0.8rem', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>Pest Alerts</span>
+            <span onClick={() => { const msg = 'Summarize my pending tasks'; setInput(msg); setTimeout(() => { setInput(''); submitDirectMessage(msg); }, 50); }} style={{ background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '12px', fontSize: '0.8rem', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>Summary</span>
+          </div>
+
+          <div style={{ padding: '0 10px 10px 10px', borderTop: 'none', display: 'flex', gap: '8px' }}>
             <input 
               type="text" value={input} onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}

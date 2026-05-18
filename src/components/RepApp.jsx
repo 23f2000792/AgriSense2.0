@@ -3,7 +3,47 @@ import React, { useState } from 'react';
 export default function RepApp({ visits, onVisitLogged }) {
   if (!visits || visits.length === 0) return <div className="text-muted" style={{ padding: '2rem', textAlign: 'center' }}>No visits planned for today.</div>;
   
-  const [expandedId, setExpandedId] = useState(visits[0].id);
+  const [expandedId, setExpandedId] = useState(visits.length > 0 ? visits[0].id : null);
+  const [loggingId, setLoggingId] = useState(null);
+  const [voiceNotes, setVoiceNotes] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recognition, setRecognition] = useState(null);
+
+  React.useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      
+      rec.onresult = (event) => {
+        let currentTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            currentTranscript += event.results[i][0].transcript + " ";
+          }
+        }
+        if (currentTranscript) {
+          setVoiceNotes(prev => prev + currentTranscript);
+        }
+      };
+      
+      rec.onerror = () => setIsRecording(false);
+      rec.onend = () => setIsRecording(false);
+      setRecognition(rec);
+    }
+  }, []);
+
+  const toggleRecording = () => {
+    if (!recognition) return alert("Speech recognition is not supported in your browser.");
+    if (isRecording) {
+      recognition.stop();
+      setIsRecording(false);
+    } else {
+      recognition.start();
+      setIsRecording(true);
+    }
+  };
 
   return (
     <div className="flex-col gap-4">
@@ -128,32 +168,76 @@ export default function RepApp({ visits, onVisitLogged }) {
                   </div>
                 </div>
 
-                <button className="btn btn-primary" onClick={async (e) => { 
-                  e.stopPropagation(); 
-                  try {
-                    const res = await fetch(`/api/visits/${visit.id}/log`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ notes: "Completed via Field Co-Pilot App" })
-                    });
-                    if (res.ok) {
-                      onVisitLogged && onVisitLogged(visit.id);
-                    } else {
-                      alert('Fallback: Removed from local view.');
-                      onVisitLogged && onVisitLogged(visit.id);
-                    }
-                  } catch(e) {
-                    alert('Backend offline. Removed from local view.');
-                    onVisitLogged && onVisitLogged(visit.id);
-                  }
+                <button className="btn btn-primary" onClick={(e) => {
+                  e.stopPropagation();
+                  setLoggingId(visit.id);
+                  setVoiceNotes("");
                 }}>
-                  Log Visit Outcome
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  Log Visit with Voice
                 </button>
               </div>
             </div>
           </div>
         );
       })}
+
+      {/* Voice Logging Modal */}
+      {loggingId && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
+          padding: '1rem'
+        }} onClick={() => setLoggingId(null)}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', position: 'relative' }} onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold mb-4" style={{fontSize: '1.25rem'}}>Log Visit Outcome</h3>
+            
+            <textarea 
+              className="chat-input"
+              style={{ width: '100%', minHeight: '120px', marginBottom: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}
+              placeholder="Type your notes here or tap the microphone to speak..."
+              value={voiceNotes}
+              onChange={e => setVoiceNotes(e.target.value)}
+            />
+
+            <div className="flex-row gap-2 justify-between">
+              <button 
+                className="btn" 
+                style={{ flex: 1, background: isRecording ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)', color: isRecording ? '#ef4444' : '#fff', borderColor: isRecording ? '#ef4444' : 'transparent' }}
+                onClick={toggleRecording}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                {isRecording ? 'Listening...' : 'Dictate'}
+              </button>
+
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1 }}
+                onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/visits/${loggingId}/log`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ notes: voiceNotes || "Completed via Field Co-Pilot App" })
+                    });
+                    if (res.ok) {
+                      onVisitLogged && onVisitLogged(loggingId);
+                    } else {
+                      onVisitLogged && onVisitLogged(loggingId);
+                    }
+                  } catch(e) {
+                    onVisitLogged && onVisitLogged(loggingId);
+                  }
+                  setLoggingId(null);
+                }}
+              >
+                Submit Log
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
