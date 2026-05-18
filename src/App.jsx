@@ -3,6 +3,7 @@ import RepApp from './components/RepApp';
 import ManagerDashboard from './components/ManagerDashboard';
 import Chatbot from './components/Chatbot';
 import ProductCatalog from './components/ProductCatalog';
+import Performance from './components/Performance';
 
 function App() {
   const [activeTab, setActiveTab] = useState('rep');
@@ -42,7 +43,7 @@ function App() {
       }
     } catch (err) {
       console.error(err);
-      setError(err.message || "Failed to connect to backend and fallback data is missing.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -59,29 +60,30 @@ function App() {
     }));
   };
 
-  if (loading) {
+  if (error) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
-        <div className="pulse-animation" style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--color-main)' }}></div>
+      <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444', fontFamily: 'Inter, sans-serif' }}>
+        <h2>Error Loading App</h2>
+        <p>{error}</p>
+        <button className="btn" onClick={() => { setError(null); setLoading(true); fetchData(); }} style={{marginTop: '1rem'}}>Retry Connection</button>
       </div>
     );
   }
 
-  if (error) {
+  if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444' }}>
-        <h2>Error Loading App</h2>
-        <p>{error}</p>
-        <button className="btn btn-primary mt-4" onClick={fetchData}>Retry Connection</button>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center', background: 'var(--color-bg)', color: '#fff', fontFamily: 'Inter, sans-serif' }}>
+        <div className="pulse-animation" style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--color-main)', marginBottom: '1rem' }}></div>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Syncing Field Data...</h2>
       </div>
     );
   }
 
   return (
-    <div className="mobile-container">
-      {/* Header */}
-      <header className="glass-nav" style={{ padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <div className="app-container">
+      {/* Top Header */}
+      <header className="glass-header" style={{ padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="flex-row gap-3 items-center">
           <div style={{ background: 'var(--color-main)', width: '36px', height: '36px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
           </div>
@@ -101,31 +103,40 @@ function App() {
           ? <RepApp visits={appData.visits} onVisitLogged={handleVisitLogged} /> 
           : activeTab === 'mgr' 
           ? <ManagerDashboard dashboard={appData.dashboard} alerts={appData.alerts} />
-          : <ProductCatalog products={appData.products} />}
+          : activeTab === 'catalog'
+          ? <ProductCatalog products={appData.products} />
+          : <Performance />}
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="glass-nav" style={{ display: 'flex', padding: '0.75rem 1.5rem', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <nav className="glass-nav" style={{ display: 'flex', padding: '0.75rem 0.5rem', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <button 
           onClick={() => setActiveTab('rep')}
           style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'rep' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Field Plan</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Plan</span>
         </button>
         <button 
           onClick={() => setActiveTab('mgr')}
           style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'mgr' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Dashboard</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Overview</span>
         </button>
         <button 
           onClick={() => setActiveTab('catalog')}
           style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'catalog' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Products</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Products</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('perf')}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'perf' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <span style={{ fontSize: '0.7rem', fontWeight: 600 }}>Stats</span>
         </button>
       </nav>
 

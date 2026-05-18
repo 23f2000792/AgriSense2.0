@@ -4,6 +4,7 @@ export default function RepApp({ visits, onVisitLogged }) {
   if (!visits || visits.length === 0) return <div className="text-muted" style={{ padding: '2rem', textAlign: 'center' }}>No visits planned for today.</div>;
   
   const [expandedId, setExpandedId] = useState(visits.length > 0 ? visits[0].id : null);
+  const [viewMode, setViewMode] = useState('list');
   const [loggingId, setLoggingId] = useState(null);
   const [voiceNotes, setVoiceNotes] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -72,8 +73,56 @@ export default function RepApp({ visits, onVisitLogged }) {
         </div>
       </div>
 
-      <h3 className="font-bold mt-4 mb-2" style={{ fontSize: '1.25rem' }}>Visit Sequence</h3>
+      <div className="flex-row justify-between mb-2 mt-4" style={{ alignItems: 'center' }}>
+        <h3 className="font-bold" style={{ fontSize: '1.25rem', margin: 0 }}>Visit Sequence</h3>
+        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '2px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <button onClick={() => setViewMode('list')} style={{ background: viewMode === 'list' ? 'rgba(0, 166, 90, 0.3)' : 'transparent', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s' }}>List</button>
+          <button onClick={() => setViewMode('map')} style={{ background: viewMode === 'map' ? 'rgba(0, 166, 90, 0.3)' : 'transparent', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s' }}>Map</button>
+        </div>
+      </div>
 
+      {viewMode === 'map' ? (
+        <div className="card" style={{ padding: 0, overflow: 'hidden', height: '400px', position: 'relative', background: '#0f172a' }}>
+          {/* Faux Map Background Grid */}
+          <div style={{ width: '100%', height: '100%', backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)' }}>
+            
+            {/* Faux Routing Line */}
+            <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+              <polyline points="40,80 120,180 200,100 280,260 320,150" fill="none" stroke="rgba(0, 166, 90, 0.5)" strokeWidth="4" strokeDasharray="8 8" />
+            </svg>
+
+            {/* Map Pins */}
+            {visits.map((visit, i) => {
+              // Procedurally generate positions for the mock map
+              const positions = [
+                { top: '80px', left: '40px' },
+                { top: '180px', left: '120px' },
+                { top: '100px', left: '200px' },
+                { top: '260px', left: '280px' },
+                { top: '150px', left: '320px' },
+                { top: '300px', left: '100px' },
+              ];
+              const pos = positions[i % positions.length];
+              const col = visit.priority === 'High' ? '#ef4444' : '#f59e0b';
+              
+              return (
+                <div key={visit.id} style={{ position: 'absolute', top: pos.top, left: pos.left, transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div className="pulse-animation" style={{ width: '20px', height: '20px', borderRadius: '50%', background: col, border: '3px solid #fff', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }}></div>
+                  <div style={{ background: 'rgba(0,0,0,0.8)', padding: '4px 8px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 700, color: '#fff', marginTop: '4px', border: `1px solid ${col}`, whiteSpace: 'nowrap' }}>
+                    {i + 1}. {visit.name.split(' ')[0]}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          <div style={{ position: 'absolute', bottom: '15px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', padding: '8px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.85rem', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+            Start Route via Maps
+          </div>
+        </div>
+      ) : (
+      <>
       {/* List of Visits */}
       {visits.map((visit, index) => {
         const isExpanded = expandedId === visit.id;
@@ -183,6 +232,8 @@ export default function RepApp({ visits, onVisitLogged }) {
           </div>
         );
       })}
+      </>
+      )}
 
       {/* Voice Logging Modal */}
       {loggingId && (
