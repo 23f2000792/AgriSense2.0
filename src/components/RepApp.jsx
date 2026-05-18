@@ -8,6 +8,8 @@ export default function RepApp({ visits, onVisitLogged }) {
   const [voiceNotes, setVoiceNotes] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [recognition, setRecognition] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [insightMsg, setInsightMsg] = useState(null);
 
   React.useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -213,28 +215,60 @@ export default function RepApp({ visits, onVisitLogged }) {
 
               <button 
                 className="btn btn-primary" 
-                style={{ flex: 1 }}
+                style={{ flex: 1, opacity: isSubmitting ? 0.7 : 1 }}
+                disabled={isSubmitting}
                 onClick={async () => {
+                  setIsSubmitting(true);
                   try {
                     const res = await fetch(`/api/visits/${loggingId}/log`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ notes: voiceNotes || "Completed via Field Co-Pilot App" })
                     });
-                    if (res.ok) {
-                      onVisitLogged && onVisitLogged(loggingId);
+                    const data = await res.json();
+                    if (data.insight && data.insight !== "Standard visit completed.") {
+                      setInsightMsg(data.insight);
+                      // Don't close loggingId yet so we show the insight, or show a separate modal
+                      setLoggingId(null);
                     } else {
                       onVisitLogged && onVisitLogged(loggingId);
+                      setLoggingId(null);
                     }
                   } catch(e) {
                     onVisitLogged && onVisitLogged(loggingId);
+                    setLoggingId(null);
                   }
-                  setLoggingId(null);
+                  setIsSubmitting(false);
                 }}
               >
-                Submit Log
+                {isSubmitting ? 'Analyzing AI...' : 'Submit Log'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Insight Modal */}
+      {insightMsg && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(12px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200,
+          padding: '1rem', animation: 'fadeIn 0.3s ease'
+        }} onClick={() => { setInsightMsg(null); onVisitLogged && onVisitLogged(loggingId); }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', background: 'linear-gradient(145deg, rgba(0, 166, 90, 0.2), rgba(0, 90, 140, 0.15))', border: '1px solid rgba(0, 166, 90, 0.4)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', color: '#6ee7b7' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>
+              <h3 className="font-extrabold" style={{ fontSize: '1.25rem', margin: 0 }}>AI Action Extracted</h3>
+            </div>
+            
+            <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: '#fff', marginBottom: '1.5rem', fontWeight: 600 }}>
+              "{insightMsg}"
+            </p>
+            
+            <button className="btn btn-primary" style={{ width: '100%', background: '#00a65a', color: '#fff', border: 'none' }} onClick={() => { setInsightMsg(null); onVisitLogged && onVisitLogged(loggingId); }}>
+              Apply to NBA Pipeline
+            </button>
           </div>
         </div>
       )}

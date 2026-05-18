@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function ProductCatalog({ products }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [recommendedProd, setRecommendedProd] = useState(null);
   
   const displayProducts = products && products.length > 0 ? products : [];
 
@@ -44,8 +45,21 @@ export default function ProductCatalog({ products }) {
               <div className="text-sm mb-4"><span className="text-muted">Key Feature:</span> <span style={{ color: '#e2e8f0' }}>{prod.feature}</span></div>
             </div>
             
-            <button className="btn" style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#6ee7b7' }}>
-              Recommend in Next Visit
+            <button 
+              className="btn" 
+              style={{ 
+                width: '100%', 
+                background: recommendedProd === prod.id ? 'rgba(0, 166, 90, 0.2)' : 'rgba(255,255,255,0.05)', 
+                border: recommendedProd === prod.id ? '1px solid rgba(0, 166, 90, 0.4)' : '1px solid rgba(255,255,255,0.1)', 
+                color: recommendedProd === prod.id ? '#6ee7b7' : '#fff',
+                transition: 'all 0.3s ease'
+              }}
+              onClick={() => {
+                setRecommendedProd(prod.id);
+                setTimeout(() => setRecommendedProd(null), 2000);
+              }}
+            >
+              {recommendedProd === prod.id ? 'Added to NBA Pipeline ✓' : 'Recommend in Next Visit'}
             </button>
           </div>
         ))}

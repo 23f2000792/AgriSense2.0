@@ -70,13 +70,33 @@ def get_visits(db: Session = Depends(get_db)):
 @app.post("/api/visits/{visit_id}/log")
 def log_visit(visit_id: str, payload: dict = Body(...), db: Session = Depends(get_db)):
     notes = payload.get("notes", "")
+    
+    # Generate AI Insight from notes using Gemini
+    insight_text = "Standard visit completed."
+    if len(notes) > 10:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if api_key:
+            try:
+                genai.configure(api_key=api_key)
+                prompt = f"Analyze these field visit notes from a Syngenta rep. Give a 1-sentence actionable follow-up or insight. Notes: {notes}"
+                try:
+                    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                    resp = model.generate_content(prompt)
+                    insight_text = resp.text.strip()
+                except:
+                    model = genai.GenerativeModel('gemini-pro')
+                    resp = model.generate_content(prompt)
+                    insight_text = resp.text.strip()
+            except Exception:
+                pass
+    
     v_ret = db.query(RetailerVisit).filter(RetailerVisit.id == visit_id).first()
     if v_ret:
         v_ret.status = "Completed"
         v_ret.notes = notes
         v_ret.completed_at = datetime.utcnow()
         db.commit()
-        return {"status": "success", "message": "Retailer visit logged"}
+        return {"status": "success", "message": "Retailer visit logged", "insight": insight_text}
         
     v_grw = db.query(GrowerVisit).filter(GrowerVisit.id == visit_id).first()
     if v_grw:
@@ -84,9 +104,9 @@ def log_visit(visit_id: str, payload: dict = Body(...), db: Session = Depends(ge
         v_grw.notes = notes
         v_grw.completed_at = datetime.utcnow()
         db.commit()
-        return {"status": "success", "message": "Grower visit logged"}
+        return {"status": "success", "message": "Grower visit logged", "insight": insight_text}
         
-    raise HTTPException(status_code=404, detail="Visit not found")
+    return {"status": "error", "message": "Visit not found"}
 
 @app.get("/api/dashboard")
 def get_dashboard(db: Session = Depends(get_db)):
