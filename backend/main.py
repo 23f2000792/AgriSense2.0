@@ -29,37 +29,43 @@ def get_db():
 
 @app.get("/api/visits")
 def get_visits(db: Session = Depends(get_db)):
-    ret_visits = db.query(RetailerVisit).filter(RetailerVisit.status == "Pending").order_by(RetailerVisit.score.desc()).all()
-    grw_visits = db.query(GrowerVisit).filter(GrowerVisit.status == "Pending").all()
-    
-    visits_out = []
-    for v in ret_visits:
-        visits_out.append({
-            "id": v.id, "name": v.name, "type": "Retailer", "priority": v.priority,
-            "reason": v.reason, "tehsil": v.tehsil, "sales30d": v.sales30d, "daysCover": v.daysCover,
-            "nba": {
-                "product": v.nba_product,
-                "objective": v.nba_objective,
-                "roi": v.nba_roi,
-                "talkingPoints": json.loads(v.nba_talkingPoints),
-                "tags": json.loads(v.nba_tags)
-            }
-        })
+    try:
+        ret_visits = db.query(RetailerVisit).filter(RetailerVisit.status == "Pending").order_by(RetailerVisit.score.desc()).all()
+        grw_visits = db.query(GrowerVisit).filter(GrowerVisit.status == "Pending").all()
         
-    for v in grw_visits:
-        visits_out.append({
-            "id": v.id, "name": v.name, "type": "Grower", "priority": v.priority,
-            "reason": v.reason, "tehsil": v.tehsil, "crop": v.crop,
-            "nba": {
-                "product": v.nba_product,
-                "objective": v.nba_objective,
-                "roi": v.nba_roi,
-                "talkingPoints": json.loads(v.nba_talkingPoints),
-                "tags": json.loads(v.nba_tags)
-            }
-        })
-        
-    return {"visits": visits_out}
+        visits_out = []
+        for v in ret_visits:
+            visits_out.append({
+                "id": v.id, "name": v.name, "type": "Retailer", "priority": v.priority,
+                "reason": v.reason, "tehsil": v.tehsil, "sales30d": v.sales30d, "daysCover": v.daysCover,
+                "nba": {
+                    "product": v.nba_product,
+                    "objective": v.nba_objective,
+                    "roi": v.nba_roi,
+                    "talkingPoints": json.loads(v.nba_talkingPoints) if v.nba_talkingPoints else [],
+                    "tags": json.loads(v.nba_tags) if v.nba_tags else []
+                }
+            })
+            
+        for v in grw_visits:
+            visits_out.append({
+                "id": v.id, "name": v.name, "type": "Grower", "priority": v.priority,
+                "reason": v.reason, "tehsil": v.tehsil, "crop": v.crop,
+                "nba": {
+                    "product": v.nba_product,
+                    "objective": v.nba_objective,
+                    "roi": v.nba_roi,
+                    "talkingPoints": json.loads(v.nba_talkingPoints) if v.nba_talkingPoints else [],
+                    "tags": json.loads(v.nba_tags) if v.nba_tags else []
+                }
+            })
+            
+        return {"visits": visits_out}
+    except Exception as e:
+        import traceback
+        trace = traceback.format_exc()
+        # Return a structured error to the frontend
+        return {"error": str(e), "trace": trace}
 
 @app.post("/api/visits/{visit_id}/log")
 def log_visit(visit_id: str, payload: dict = Body(...), db: Session = Depends(get_db)):
@@ -84,20 +90,28 @@ def log_visit(visit_id: str, payload: dict = Body(...), db: Session = Depends(ge
 
 @app.get("/api/dashboard")
 def get_dashboard(db: Session = Depends(get_db)):
-    dash = db.query(DashboardMetric).first()
-    if dash:
-        return {
-            "sales_vs_target": dash.sales_vs_target,
-            "avg_rev": dash.avg_rev,
-            "coverage": dash.coverage,
-            "nba_acc": dash.nba_acc
-        }
-    return {}
+    try:
+        dash = db.query(DashboardMetric).first()
+        if dash:
+            return {
+                "sales_vs_target": dash.sales_vs_target,
+                "avg_rev": dash.avg_rev,
+                "coverage": dash.coverage,
+                "nba_acc": dash.nba_acc
+            }
+        return {}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "trace": traceback.format_exc()}
 
 @app.get("/api/alerts")
 def get_alerts(db: Session = Depends(get_db)):
-    alerts = db.query(Alert).filter(Alert.is_active == True).all()
-    return [{"title": a.title, "severity": a.severity, "desc": a.desc, "affected": a.affected} for a in alerts]
+    try:
+        alerts = db.query(Alert).filter(Alert.is_active == True).all()
+        return [{"title": a.title, "severity": a.severity, "desc": a.desc, "affected": a.affected} for a in alerts]
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "trace": traceback.format_exc()}
 
 @app.post("/api/chat")
 def chat_with_copilot(payload: dict = Body(...)):

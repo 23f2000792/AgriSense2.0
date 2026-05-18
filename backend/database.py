@@ -5,7 +5,8 @@ from datetime import datetime
 import os
 import shutil
 
-is_vercel = os.environ.get("VERCEL") == "1" or os.environ.get("VERCEL_ENV") is not None
+# Automatically detect Vercel environment (Serverless AWS Lambda)
+is_vercel = any(os.environ.get(k) for k in ["VERCEL", "VERCEL_ENV", "VERCEL_URL", "AWS_EXECUTION_ENV", "AWS_LAMBDA_FUNCTION_NAME"])
 backend_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(backend_dir, "agrisense.db")
 

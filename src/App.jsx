@@ -22,6 +22,11 @@ function App() {
         const visits = await visitsRes.json();
         const dashboard = await dashRes.json();
         const alerts = await alertsRes.json();
+        
+        if (visits.error) {
+           throw new Error("Backend Error: " + visits.error + " | Trace: " + visits.trace);
+        }
+        
         setAppData({ visits: visits.visits, dashboard, alerts });
       } else {
         // Fallback to static JSON if backend is offline
@@ -32,7 +37,7 @@ function App() {
       }
     } catch (err) {
       console.error(err);
-      setError("Failed to connect to backend and fallback data is missing.");
+      setError(err.message || "Failed to connect to backend and fallback data is missing.");
     } finally {
       setLoading(false);
     }
