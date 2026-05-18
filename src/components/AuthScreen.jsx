@@ -29,7 +29,7 @@ export default function AuthScreen({ onLogin }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center', background: 'var(--color-bg)', padding: '1.5rem', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'center', alignItems: 'center', background: 'var(--color-background)', padding: '1.5rem', fontFamily: 'Inter, sans-serif' }}>
       
       {/* Branding */}
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>

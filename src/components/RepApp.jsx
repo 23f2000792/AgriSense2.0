@@ -315,24 +315,14 @@ export default function RepApp({ visits, onVisitLogged }) {
                 onClick={async () => {
                   setIsSubmitting(true);
                   try {
-                    const res = await fetch(`/api/visits/${loggingId}/log`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ notes: voiceNotes || "Completed via Field Co-Pilot App" })
-                    });
-                    const data = await res.json();
-                    if (data.insight && data.insight !== "Standard visit completed.") {
+                    const data = await onVisitLogged(loggingId, voiceNotes || "Completed via Field Co-Pilot App");
+                    if (data && data.insight && data.insight !== "Standard visit completed.") {
                       setInsightMsg(data.insight);
-                      // Don't close loggingId yet so we show the insight, or show a separate modal
-                      setLoggingId(null);
-                    } else {
-                      onVisitLogged && onVisitLogged(loggingId);
-                      setLoggingId(null);
                     }
                   } catch(e) {
-                    onVisitLogged && onVisitLogged(loggingId);
-                    setLoggingId(null);
+                    console.error(e);
                   }
+                  setLoggingId(null);
                   setIsSubmitting(false);
                 }}
               >

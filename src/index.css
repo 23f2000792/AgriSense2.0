@@ -60,10 +60,16 @@ body {
 
 /* Base Layout */
 .app-container {
-  max-width: 100vw;
-  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  background-color: var(--color-background);
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  overflow: hidden;
 }
 
 .mobile-container {

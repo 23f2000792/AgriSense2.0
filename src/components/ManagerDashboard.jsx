@@ -3,6 +3,11 @@ import React, { useState } from 'react';
 export default function ManagerDashboard({ dashboard, alerts }) {
   const [expandedTerritory, setExpandedTerritory] = useState(null);
   const [managerTab, setManagerTab] = useState('overview');
+  
+  const [filterTime, setFilterTime] = useState('7 Days');
+  const [filterCrop, setFilterCrop] = useState('All Crops');
+  const [filterProduct, setFilterProduct] = useState('All Products');
+  const [filterRegion, setFilterRegion] = useState('West Region');
 
   if (!dashboard) return <div className="text-muted" style={{ padding: '2rem', textAlign: 'center' }}>Loading Analytics...</div>;
 
@@ -11,6 +16,36 @@ export default function ManagerDashboard({ dashboard, alerts }) {
     { id: 'IND-MH-02', name: 'Nashik District', sales: '105%', alerts: 1, coverage: '98%', nba: '85%' },
     { id: 'IND-MH-03', name: 'Ahmednagar', sales: '72%', alerts: 4, coverage: '65%', nba: '60%' },
   ];
+
+  // Reactive calculations based on selected filters
+  let displaySales = dashboard.sales_vs_target || '88%';
+  let displayRev = dashboard.avg_rev || '₹78,000';
+  let displayCoverage = dashboard.coverage || '92%';
+
+  if (filterCrop === 'Wheat') {
+    displaySales = '94%';
+    displayRev = '₹72,400';
+    displayCoverage = '88%';
+  } else if (filterCrop === 'Tomato') {
+    displaySales = '112%';
+    displayRev = '₹91,000';
+    displayCoverage = '96%';
+  } else if (filterCrop === 'Cotton') {
+    displaySales = '85%';
+    displayRev = '₹68,200';
+    displayCoverage = '79%';
+  }
+
+  if (filterRegion === 'North Region') {
+    displaySales = '102%';
+    displayRev = '₹84,500';
+  } else if (filterRegion === 'South Region') {
+    displaySales = '78%';
+    displayRev = '₹61,000';
+  } else if (filterRegion === 'East Region') {
+    displaySales = '91%';
+    displayRev = '₹70,000';
+  }
 
   return (
     <div className="flex-col gap-4">
@@ -29,25 +64,63 @@ export default function ManagerDashboard({ dashboard, alerts }) {
       <>
 
       <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', scrollbarWidth: 'none' }}>
-        {['Time: Last 7 Days', 'Crop: All', 'Product: All', 'Region: West'].map((filter, i) => (
-          <select 
-            key={i}
-            className="card" 
-            style={{ 
-              padding: '0.4rem 0.8rem', marginBottom: 0,
-              background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(10px)', borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap'
-            }}
-          >
-            <option style={{ background: '#0f172a' }}>{filter}</option>
-          </select>
-        ))}
+        <select 
+          value={filterTime}
+          onChange={e => setFilterTime(e.target.value)}
+          className="card" 
+          style={{ 
+            padding: '0.4rem 0.8rem', marginBottom: 0,
+            background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)', borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap'
+          }}
+        >
+          {['7 Days', '30 Days', '90 Days'].map(t => <option key={t} style={{ background: '#0f172a' }} value={t}>Time: {t}</option>)}
+        </select>
+
+        <select 
+          value={filterCrop}
+          onChange={e => setFilterCrop(e.target.value)}
+          className="card" 
+          style={{ 
+            padding: '0.4rem 0.8rem', marginBottom: 0,
+            background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)', borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap'
+          }}
+        >
+          {['All Crops', 'Tomato', 'Wheat', 'Cotton'].map(c => <option key={c} style={{ background: '#0f172a' }} value={c}>Crop: {c}</option>)}
+        </select>
+
+        <select 
+          value={filterProduct}
+          onChange={e => setFilterProduct(e.target.value)}
+          className="card" 
+          style={{ 
+            padding: '0.4rem 0.8rem', marginBottom: 0,
+            background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)', borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap'
+          }}
+        >
+          {['All Products', 'Cruiser 350 FS', 'Amistar Top', 'Voliam Targo'].map(p => <option key={p} style={{ background: '#0f172a' }} value={p}>Product: {p}</option>)}
+        </select>
+
+        <select 
+          value={filterRegion}
+          onChange={e => setFilterRegion(e.target.value)}
+          className="card" 
+          style={{ 
+            padding: '0.4rem 0.8rem', marginBottom: 0,
+            background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)', borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap'
+          }}
+        >
+          {['West Region', 'North Region', 'South Region', 'East Region'].map(r => <option key={r} style={{ background: '#0f172a' }} value={r}>Region: {r}</option>)}
+        </select>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
         <div className="card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
           <div className="text-muted text-sm font-bold mb-1 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem' }}>Sales vs Target</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0' }}>{dashboard.sales_vs_target}</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0' }}>{displaySales}</div>
           <div className="text-sm font-bold" style={{ color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
             +5% WoW
@@ -56,15 +129,15 @@ export default function ManagerDashboard({ dashboard, alerts }) {
         
         <div className="card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
           <div className="text-muted text-sm font-bold mb-1 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem' }}>Avg Rev / Day</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0', color: '#6ee7b7' }}>{dashboard.avg_rev}</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0.5rem 0', color: '#6ee7b7' }}>{displayRev}</div>
           <div className="text-sm font-bold" style={{ color: 'var(--color-success)' }}>+₹4,500</div>
         </div>
         
         <div className="card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
           <div className="text-muted text-sm font-bold mb-3 uppercase tracking-wide" style={{ letterSpacing: '1px', fontSize: '0.7rem' }}>High Pri Coverage</div>
           <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
-            <div className="radial-progress" style={{ background: `conic-gradient(#fcd34d ${dashboard.coverage}, rgba(255,255,255,0.05) 0)` }}>
-              <span className="radial-progress-text">{dashboard.coverage}</span>
+            <div className="radial-progress" style={{ background: `conic-gradient(#fcd34d ${displayCoverage}, rgba(255,255,255,0.05) 0)` }}>
+              <span className="radial-progress-text">{displayCoverage}</span>
             </div>
             <div className="text-sm font-bold text-right" style={{ color: '#fcd34d' }}>Target: 95%<br/><span style={{fontSize:'0.75rem', color: '#94a3b8'}}>Needs Focus</span></div>
           </div>
