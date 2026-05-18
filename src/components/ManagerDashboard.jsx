@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function ManagerDashboard({ dashboard, alerts }) {
   const [expandedTerritory, setExpandedTerritory] = useState(null);
+  const [managerTab, setManagerTab] = useState('overview');
 
   if (!dashboard) return <div className="text-muted" style={{ padding: '2rem', textAlign: 'center' }}>Loading Analytics...</div>;
 
@@ -14,9 +15,18 @@ export default function ManagerDashboard({ dashboard, alerts }) {
   return (
     <div className="flex-col gap-4">
       <div className="mb-2">
-        <h2 className="font-extrabold" style={{ fontSize: '1.75rem', letterSpacing: '-0.5px' }}>Territory Overview</h2>
+        <h2 className="font-extrabold" style={{ fontSize: '1.75rem', letterSpacing: '-0.5px' }}>Manager Dashboard</h2>
         <p className="text-muted text-sm" style={{ marginTop: '0.25rem' }}>Master View: Maharashtra</p>
       </div>
+
+      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '4px', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '0.5rem' }}>
+        <button onClick={() => setManagerTab('overview')} style={{ flex: 1, background: managerTab === 'overview' ? 'rgba(0, 166, 90, 0.3)' : 'transparent', border: 'none', color: '#fff', padding: '8px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.2s' }}>Overview</button>
+        <button onClick={() => setManagerTab('analytics')} style={{ flex: 1, background: managerTab === 'analytics' ? 'rgba(0, 166, 90, 0.3)' : 'transparent', border: 'none', color: '#fff', padding: '8px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.2s' }}>Analytics</button>
+        <button onClick={() => setManagerTab('rules')} style={{ flex: 1, background: managerTab === 'rules' ? 'rgba(0, 166, 90, 0.3)' : 'transparent', border: 'none', color: '#fff', padding: '8px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.2s' }}>Rules Engine</button>
+      </div>
+
+      {managerTab === 'overview' && (
+      <>
 
       <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', scrollbarWidth: 'none' }}>
         {['Time: Last 7 Days', 'Crop: All', 'Product: All', 'Region: West'].map((filter, i) => (
@@ -184,6 +194,96 @@ export default function ManagerDashboard({ dashboard, alerts }) {
           </div>
         );
       })}
+      </>
+      )}
+
+      {managerTab === 'analytics' && (
+        <div className="flex-col gap-4">
+          <div className="card" style={{ padding: '1.25rem', background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
+            <h3 className="font-extrabold mb-4" style={{ fontSize: '1.1rem' }}>NBA Conversion by Reason Code</h3>
+            {/* Mock horizontal bar chart */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                { label: 'DIGITAL_PULL', val: '88%', w: '88%', color: '#6ee7b7' },
+                { label: 'CROP_STAGE_RISK', val: '76%', w: '76%', color: '#60a5fa' },
+                { label: 'OOS_RISK', val: '64%', w: '64%', color: '#fcd34d' },
+                { label: 'CROSS_SELL', val: '42%', w: '42%', color: '#fca5a5' },
+              ].map(rc => (
+                <div key={rc.label}>
+                  <div className="flex-row justify-between text-sm mb-1">
+                    <span style={{ fontWeight: 700, color: '#e2e8f0' }}>{rc.label}</span>
+                    <span style={{ fontWeight: 800, color: rc.color }}>{rc.val}</span>
+                  </div>
+                  <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                    <div style={{ width: rc.w, height: '100%', background: rc.color, borderRadius: '4px' }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="card">
+              <div className="text-muted text-sm font-bold mb-1 uppercase">Top Crop Adoption</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>Tomato (84%)</div>
+              <div className="text-sm" style={{ color: '#6ee7b7' }}>+12% WoW</div>
+            </div>
+            <div className="card">
+              <div className="text-muted text-sm font-bold mb-1 uppercase">Top Product</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>Amistar Top</div>
+              <div className="text-sm" style={{ color: '#6ee7b7' }}>452 Conversions</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {managerTab === 'rules' && (
+        <div className="flex-col gap-4">
+          <div className="card" style={{ padding: '1.25rem' }}>
+            <h3 className="font-extrabold mb-4" style={{ fontSize: '1.1rem' }}>AI Prioritization Weights</h3>
+            <p className="text-sm text-muted mb-4">Adjust the multi-objective scoring function used by the routing engine.</p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {[
+                { name: 'Value Potential', val: 40 },
+                { name: 'Risk (Stock-out / Agronomic)', val: 30 },
+                { name: 'Opportunity (Digital Funnel)', val: 20 },
+                { name: 'Coverage Urgency', val: 10 }
+              ].map(weight => (
+                <div key={weight.name}>
+                  <div className="flex-row justify-between text-sm mb-2">
+                    <span style={{ fontWeight: 600, color: '#f8fafc' }}>{weight.name}</span>
+                    <span style={{ fontWeight: 800, color: '#00a65a' }}>{weight.val}%</span>
+                  </div>
+                  <input type="range" min="0" max="100" defaultValue={weight.val} style={{ width: '100%', accentColor: '#00a65a' }} />
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-primary mt-4" style={{ width: '100%' }}>Update Scoring Engine</button>
+          </div>
+
+          <div className="card" style={{ padding: '1.25rem' }}>
+            <h3 className="font-extrabold mb-4" style={{ fontSize: '1.1rem' }}>Anomaly Detection Thresholds</h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Demand Spike (Z-Score)</div>
+                  <div className="text-xs text-muted">Triggers alert if sales exceed mean</div>
+                </div>
+                <input type="number" defaultValue={2.0} step={0.1} className="card" style={{ width: '60px', padding: '0.25rem 0.5rem', marginBottom: 0, textAlign: 'center' }} />
+              </div>
+              <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Stock-out Window</div>
+                  <div className="text-xs text-muted">Consecutive weeks qty=0</div>
+                </div>
+                <input type="number" defaultValue={2} className="card" style={{ width: '60px', padding: '0.25rem 0.5rem', marginBottom: 0, textAlign: 'center' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
