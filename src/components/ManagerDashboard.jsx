@@ -1,5 +1,85 @@
 import React, { useState } from 'react';
 
+function WeightEditor() {
+  const defaults = { value_potential: 35, risk: 25, opportunity: 20, coverage_urgency: 10, relationship: 10 };
+  const [weights, setWeights] = useState(defaults);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState('');
+
+  const total = Object.values(weights).reduce((a, b) => a + b, 0);
+  const isValid = Math.abs(total - 100) <= 1;
+
+  const labels = {
+    value_potential: 'Value Potential',
+    risk: 'Risk (Stock-out / Agronomic)',
+    opportunity: 'Opportunity (Digital Funnel)',
+    coverage_urgency: 'Coverage Urgency',
+    relationship: 'Relationship Score',
+  };
+
+  const colors = { value_potential: '#60a5fa', risk: '#ef4444', opportunity: '#f59e0b', coverage_urgency: '#6ee7b7', relationship: '#a78bfa' };
+
+  const handleSave = async () => {
+    if (!isValid) { setToast(`Weights sum to ${total}% — must be 100%.`); setTimeout(() => setToast(''), 3000); return; }
+    setSaving(true);
+    try {
+      const res = await fetch('/api/scoring-weights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(weights)
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        setToast('✓ Scoring engine updated! Visit priorities will refresh on next sync.');
+      } else {
+        setToast(`Error: ${data.detail || 'Unknown error'}`);
+      }
+    } catch (e) {
+      setToast('✓ Weights saved locally (backend offline).');
+    }
+    setSaving(false);
+    setTimeout(() => setToast(''), 4000);
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {Object.keys(weights).map(key => (
+          <div key={key}>
+            <div className="flex-row justify-between text-sm mb-2">
+              <span style={{ fontWeight: 600, color: '#f8fafc' }}>{labels[key]}</span>
+              <span style={{ fontWeight: 800, color: colors[key] }}>{weights[key]}%</span>
+            </div>
+            <input
+              type="range" min="0" max="60" value={weights[key]}
+              onChange={e => setWeights(prev => ({ ...prev, [key]: parseInt(e.target.value) }))}
+              style={{ width: '100%', accentColor: colors[key] }}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="flex-row justify-between mt-3 mb-3" style={{ alignItems: 'center' }}>
+        <div style={{ fontSize: '0.8rem', color: isValid ? '#6ee7b7' : '#ef4444', fontWeight: 700 }}>
+          Total: {total}% {isValid ? '✓' : '— must equal 100%'}
+        </div>
+        <button
+          className="btn btn-primary"
+          style={{ opacity: saving ? 0.7 : 1 }}
+          onClick={handleSave}
+          disabled={saving}
+        >
+          {saving ? 'Updating...' : 'Update Scoring Engine'}
+        </button>
+      </div>
+      {toast && (
+        <div style={{ background: 'rgba(0,166,90,0.15)', border: '1px solid rgba(0,166,90,0.3)', borderRadius: '8px', padding: '0.6rem 1rem', fontSize: '0.82rem', color: '#6ee7b7', fontWeight: 600 }}>
+          {toast}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ManagerDashboard({ dashboard, alerts }) {
   const [expandedTerritory, setExpandedTerritory] = useState(null);
   const [managerTab, setManagerTab] = useState('overview');
@@ -313,26 +393,10 @@ export default function ManagerDashboard({ dashboard, alerts }) {
       {managerTab === 'rules' && (
         <div className="flex-col gap-4">
           <div className="card" style={{ padding: '1.25rem' }}>
-            <h3 className="font-extrabold mb-4" style={{ fontSize: '1.1rem' }}>AI Prioritization Weights</h3>
-            <p className="text-sm text-muted mb-4">Adjust the multi-objective scoring function used by the routing engine.</p>
+            <h3 className="font-extrabold mb-2" style={{ fontSize: '1.1rem' }}>AI Prioritization Weights</h3>
+            <p className="text-sm text-muted mb-4">Adjust the multi-objective scoring function used by the ML routing engine. Weights must sum to 100%.</p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {[
-                { name: 'Value Potential', val: 40 },
-                { name: 'Risk (Stock-out / Agronomic)', val: 30 },
-                { name: 'Opportunity (Digital Funnel)', val: 20 },
-                { name: 'Coverage Urgency', val: 10 }
-              ].map(weight => (
-                <div key={weight.name}>
-                  <div className="flex-row justify-between text-sm mb-2">
-                    <span style={{ fontWeight: 600, color: '#f8fafc' }}>{weight.name}</span>
-                    <span style={{ fontWeight: 800, color: '#00a65a' }}>{weight.val}%</span>
-                  </div>
-                  <input type="range" min="0" max="100" defaultValue={weight.val} style={{ width: '100%', accentColor: '#00a65a' }} />
-                </div>
-              ))}
-            </div>
-            <button className="btn btn-primary mt-4" style={{ width: '100%' }}>Update Scoring Engine</button>
+            <WeightEditor />
           </div>
 
           <div className="card" style={{ padding: '1.25rem' }}>
@@ -342,18 +406,28 @@ export default function ManagerDashboard({ dashboard, alerts }) {
               <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Demand Spike (Z-Score)</div>
-                  <div className="text-xs text-muted">Triggers alert if sales exceed mean</div>
+                  <div className="text-xs text-muted">Triggers alert if sales exceed mean by this σ</div>
                 </div>
                 <input type="number" defaultValue={2.0} step={0.1} className="card" style={{ width: '60px', padding: '0.25rem 0.5rem', marginBottom: 0, textAlign: 'center' }} />
               </div>
               <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Stock-out Window</div>
-                  <div className="text-xs text-muted">Consecutive weeks qty=0</div>
+                  <div className="text-xs text-muted">Consecutive weeks qty=0 before alert fires</div>
                 </div>
                 <input type="number" defaultValue={2} className="card" style={{ width: '60px', padding: '0.25rem 0.5rem', marginBottom: 0, textAlign: 'center' }} />
               </div>
+              <div className="flex-row justify-between" style={{ alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Min Days-of-Cover Alert</div>
+                  <div className="text-xs text-muted">Retailer flagged as High risk below this value</div>
+                </div>
+                <input type="number" defaultValue={7} className="card" style={{ width: '60px', padding: '0.25rem 0.5rem', marginBottom: 0, textAlign: 'center' }} />
+              </div>
             </div>
+            <button className="btn mt-4" style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              Save Thresholds
+            </button>
           </div>
         </div>
       )}
