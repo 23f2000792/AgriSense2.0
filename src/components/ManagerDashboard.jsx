@@ -1,27 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function ManagerDashboard({ dashboard, alerts }) {
+  const [expandedTerritory, setExpandedTerritory] = useState(null);
+
   if (!dashboard) return <div className="text-muted" style={{ padding: '2rem', textAlign: 'center' }}>Loading Analytics...</div>;
+
+  const territories = [
+    { id: 'IND-MH-01', name: 'Pune District', sales: '88%', alerts: 3, coverage: '92%', nba: '78%' },
+    { id: 'IND-MH-02', name: 'Nashik District', sales: '105%', alerts: 1, coverage: '98%', nba: '85%' },
+    { id: 'IND-MH-03', name: 'Ahmednagar', sales: '72%', alerts: 4, coverage: '65%', nba: '60%' },
+  ];
 
   return (
     <div className="flex-col gap-4">
-      <div className="mb-4 flex-row justify-between" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
-        <div>
-          <h2 className="font-extrabold" style={{ fontSize: '1.75rem', letterSpacing: '-0.5px' }}>Territory Overview</h2>
-          <p className="text-muted text-sm" style={{ marginTop: '0.25rem' }}>IND-MH-01 (Pune District)</p>
-        </div>
-        <select 
-          className="card" 
-          style={{ 
-            padding: '0.6rem 1rem', marginBottom: 0, marginTop: '0.5rem',
-            background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)', borderRadius: '12px', outline: 'none', cursor: 'pointer', fontWeight: 600
-          }}
-        >
-          <option style={{ background: '#0f172a' }}>Last 7 Days</option>
-          <option style={{ background: '#0f172a' }}>Last 30 Days</option>
-          <option style={{ background: '#0f172a' }}>This Quarter</option>
-        </select>
+      <div className="mb-2">
+        <h2 className="font-extrabold" style={{ fontSize: '1.75rem', letterSpacing: '-0.5px' }}>Territory Overview</h2>
+        <p className="text-muted text-sm" style={{ marginTop: '0.25rem' }}>Master View: Maharashtra</p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem', scrollbarWidth: 'none' }}>
+        {['Time: Last 7 Days', 'Crop: All', 'Product: All', 'Region: West'].map((filter, i) => (
+          <select 
+            key={i}
+            className="card" 
+            style={{ 
+              padding: '0.4rem 0.8rem', marginBottom: 0,
+              background: 'rgba(255,255,255,0.05)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)', borderRadius: '8px', outline: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap'
+            }}
+          >
+            <option style={{ background: '#0f172a' }}>{filter}</option>
+          </select>
+        ))}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
@@ -59,6 +69,74 @@ export default function ManagerDashboard({ dashboard, alerts }) {
             <div className="text-sm font-bold text-right" style={{ color: 'var(--color-success)' }}>+8% WoW<br/><span style={{fontSize:'0.75rem', color: '#94a3b8'}}>Excellent</span></div>
           </div>
         </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1.5rem', marginBottom: '0.5rem' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-main)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <h3 className="font-extrabold" style={{ fontSize: '1.25rem', margin: 0 }}>Territory Breakdown</h3>
+      </div>
+
+      {/* Territory Table */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {territories.map(terr => {
+          const isExpanded = expandedTerritory === terr.id;
+          return (
+            <div key={terr.id} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div 
+                style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: isExpanded ? 'rgba(0, 166, 90, 0.1)' : 'transparent' }}
+                onClick={() => setExpandedTerritory(isExpanded ? null : terr.id)}
+              >
+                <div style={{ flex: 1.5 }}>
+                  <div style={{ fontWeight: 800, color: '#f8fafc', fontSize: '1rem' }}>{terr.name}</div>
+                  <div className="text-sm text-muted">{terr.id}</div>
+                </div>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div className="text-sm text-muted font-bold" style={{ fontSize: '0.65rem', textTransform: 'uppercase' }}>Sales</div>
+                  <div style={{ fontWeight: 700, color: parseInt(terr.sales) >= 100 ? '#6ee7b7' : '#fca5a5' }}>{terr.sales}</div>
+                </div>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div className="text-sm text-muted font-bold" style={{ fontSize: '0.65rem', textTransform: 'uppercase' }}>Cov.</div>
+                  <div style={{ fontWeight: 700, color: '#fcd34d' }}>{terr.coverage}</div>
+                </div>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div className="text-sm text-muted font-bold" style={{ fontSize: '0.65rem', textTransform: 'uppercase' }}>NBA</div>
+                  <div style={{ fontWeight: 700, color: '#6ee7b7' }}>{terr.nba}</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '30px' }}>
+                  {terr.alerts > 0 && <span className="pulse-animation" style={{ background: '#ef4444', color: '#fff', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 800 }}>{terr.alerts}</span>}
+                </div>
+              </div>
+
+              {/* Expanded Detail View */}
+              {isExpanded && (
+                <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0,0,0,0.2)' }}>
+                  
+                  {/* Map with Tehsil Shading Mock */}
+                  <div style={{ width: '100%', height: '120px', borderRadius: '8px', background: 'linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.8))', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '60%', height: '100%', background: 'rgba(0, 166, 90, 0.2)', borderRight: '2px dashed rgba(255,255,255,0.2)' }}></div>
+                    <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'rgba(239, 68, 68, 0.2)' }}></div>
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: '#fff', fontWeight: 800, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                      Tehsil Risk Map
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <div className="text-sm font-bold mb-2 text-muted uppercase">Top Retailers</div>
+                      <div style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '6px', fontSize: '0.8rem', color: '#e2e8f0', marginBottom: '4px' }}>1. Kisan Krushi Kendra</div>
+                      <div style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '6px', fontSize: '0.8rem', color: '#e2e8f0' }}>2. Shree Ganesh Agro</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold mb-2 text-muted uppercase">Critical Alerts</div>
+                      <div style={{ background: 'rgba(239, 68, 68, 0.1)', borderLeft: '2px solid #ef4444', padding: '0.5rem', borderRadius: '0 6px 6px 0', fontSize: '0.8rem', color: '#fca5a5', marginBottom: '4px' }}>Cruiser 350FS Stock-out</div>
+                      <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderLeft: '2px solid #f59e0b', padding: '0.5rem', borderRadius: '0 6px 6px 0', fontSize: '0.8rem', color: '#fcd34d' }}>Low Digital Conversion</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1.5rem', marginBottom: '0.5rem' }}>
