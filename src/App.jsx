@@ -2,38 +2,41 @@ import React, { useState, useEffect } from 'react';
 import RepApp from './components/RepApp';
 import ManagerDashboard from './components/ManagerDashboard';
 import Chatbot from './components/Chatbot';
+import ProductCatalog from './components/ProductCatalog';
 
 function App() {
   const [activeTab, setActiveTab] = useState('rep');
-  const [appData, setAppData] = useState({ visits: [], dashboard: {}, alerts: [] });
+  const [appData, setAppData] = useState({ visits: [], dashboard: {}, alerts: [], products: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
     try {
       // Try hitting the live backend API
-      const [visitsRes, dashRes, alertsRes] = await Promise.all([
+      const [visitsRes, dashRes, alertsRes, prodRes] = await Promise.all([
         fetch('/api/visits').catch(() => null),
         fetch('/api/dashboard').catch(() => null),
-        fetch('/api/alerts').catch(() => null)
+        fetch('/api/alerts').catch(() => null),
+        fetch('/api/products').catch(() => null)
       ]);
-
-      if (visitsRes && dashRes && alertsRes) {
+      
+      if (visitsRes && dashRes && alertsRes && prodRes) {
         const visits = await visitsRes.json();
         const dashboard = await dashRes.json();
         const alerts = await alertsRes.json();
+        const products = await prodRes.json();
         
         if (visits.error) {
            throw new Error("Backend Error: " + visits.error + " | Trace: " + visits.trace);
         }
         
-        setAppData({ visits: visits.visits, dashboard, alerts });
+        setAppData({ visits: visits.visits, dashboard, alerts, products });
       } else {
         // Fallback to static JSON if backend is offline
         const staticRes = await fetch('/data.json');
         if (!staticRes.ok) throw new Error("Failed to load static data");
         const staticData = await staticRes.json();
-        setAppData(staticData);
+        setAppData({ ...staticData, products: [] });
       }
     } catch (err) {
       console.error(err);
@@ -94,7 +97,9 @@ function App() {
       <main style={{ padding: '1.5rem', flex: 1, overflowY: 'auto' }}>
         {activeTab === 'rep' 
           ? <RepApp visits={appData.visits} onVisitLogged={handleVisitLogged} /> 
-          : <ManagerDashboard dashboard={appData.dashboard} alerts={appData.alerts} />}
+          : activeTab === 'mgr' 
+          ? <ManagerDashboard dashboard={appData.dashboard} alerts={appData.alerts} />
+          : <ProductCatalog products={appData.products} />}
       </main>
 
       {/* Bottom Navigation */}
@@ -112,6 +117,13 @@ function App() {
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
           <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Dashboard</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('catalog')}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', background: 'none', border: 'none', color: activeTab === 'catalog' ? '#fff' : '#64748b', cursor: 'pointer', transition: 'all 0.3s ease' }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Products</span>
         </button>
       </nav>
 

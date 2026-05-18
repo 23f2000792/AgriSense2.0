@@ -113,6 +113,18 @@ def get_alerts(db: Session = Depends(get_db)):
         import traceback
         return {"error": str(e), "trace": traceback.format_exc()}
 
+@app.get("/api/products")
+def get_products():
+    # Dynamically serve product catalog
+    return [
+        {"id": 1, "name": "Cruiser 350 FS", "type": "Insecticide", "crop": "Cotton, Corn", "feature": "Early season protection", "stock": "High"},
+        {"id": 2, "name": "Amistar Top", "type": "Fungicide", "crop": "Wheat, Rice", "feature": "Broad-spectrum control", "stock": "Medium"},
+        {"id": 3, "name": "Voliam Targo", "type": "Insecticide", "crop": "Vegetables", "feature": "Long-lasting effect", "stock": "Low"},
+        {"id": 4, "name": "Pegasus", "type": "Miticide", "crop": "Cotton, Vegetables", "feature": "Excellent translaminar action", "stock": "High"},
+        {"id": 5, "name": "Axial", "type": "Herbicide", "crop": "Wheat", "feature": "Targeted weed control", "stock": "High"},
+        {"id": 6, "name": "Kavach", "type": "Fungicide", "crop": "Peanut, Potato", "feature": "Multi-site action", "stock": "Medium"}
+    ]
+
 @app.post("/api/chat")
 def chat_with_copilot(payload: dict = Body(...)):
     message = payload.get("message", "")
@@ -122,15 +134,21 @@ def chat_with_copilot(payload: dict = Body(...)):
         
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
         
         system_prompt = """You are Vasudev.ai, a field force Co-Pilot for Syngenta. 
         You provide insights to sales reps based on the provided ML pipeline context. 
         Keep your answers extremely short, professional, and actionable (2-3 sentences max).
         """
-        
         full_prompt = f"{system_prompt}\nUser Query: {message}\nResponse:"
-        response = model.generate_content(full_prompt)
+        
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            response = model.generate_content(full_prompt)
+        except Exception:
+            # Fallback for API regions/keys that don't support flash yet
+            model = genai.GenerativeModel('gemini-pro')
+            response = model.generate_content(full_prompt)
+            
         return {"response": response.text}
     except Exception as e:
         return {"response": f"Error reaching AI: {str(e)}"}
