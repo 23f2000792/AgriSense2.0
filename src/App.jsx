@@ -93,34 +93,24 @@ function App() {
   useEffect(() => {
     fetchData();
 
-    // Enterprise Real-Time Sync Polling Loop (fetches latest field data every 15 seconds)
+    // Enterprise Real-Time Sync Polling Loop — runs every 30s (reduced from 15s to cut lag)
     const syncInterval = setInterval(() => {
-      if (navigator.onLine && !isOffline) {
-        fetchData();
-      }
-    }, 15000);
+      if (navigator.onLine) fetchData();
+    }, 30000);
 
-    const handleOnline = () => {
-      setIsOffline(false);
-      syncOfflineLogs();
-    };
-    const handleOffline = () => {
-      setIsOffline(true);
-    };
+    const handleOnline = () => { setIsOffline(false); syncOfflineLogs(); };
+    const handleOffline = () => setIsOffline(true);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
-    if (navigator.onLine) {
-      syncOfflineLogs();
-    }
+    if (navigator.onLine) syncOfflineLogs();
 
     return () => {
       clearInterval(syncInterval);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [isOffline]);
+  }, []); // ← empty deps: only register once, no re-subscription on state changes
 
   const handleLogVisit = async (visitId, notes) => {
     // Optimistically update UI
@@ -299,71 +289,233 @@ function App() {
         )}
       </nav>
 
-      {/* Floating Crop Scanner */}
-      <div 
-        onClick={() => {
-          setIsScanning(true);
-          setTimeout(() => {
-            setScanResult({ disease: "Early Blight Detected", confidence: "94%", product: "Amistar Top" });
-            setIsScanning(false);
-          }, 3000);
-        }}
+      {/* Floating Crop Scanner — Real Camera */}
+      <CropScanner />
+
+    </div>
+  );
+}
+
+// ─── Real Camera Crop Scanner ─────────────────────────────────────────────────
+function CropScanner() {
+  const [open, setOpen] = React.useState(false);
+  const [phase, setPhase] = React.useState('idle'); // idle | camera | analyzing | result
+  const [result, setResult] = React.useState(null);
+  const [camError, setCamError] = React.useState('');
+  const videoRef = React.useRef(null);
+  const streamRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
+
+  const startCamera = async () => {
+    setCamError('');
+    setPhase('camera');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (err) {
+      setCamError('Camera access denied or unavailable. Please allow camera permission.');
+      setPhase('idle');
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
+  };
+
+  const handleCapture = async () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const imageBase64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+    stopCamera();
+    setPhase('analyzing');
+
+    try {
+      const res = await fetch('/api/scan-crop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_base64: imageBase64 })
+      });
+      const data = await res.json();
+      setResult(data);
+      setPhase('result');
+    } catch (e) {
+      // Graceful fallback: show honest message
+      setResult({
+        disease: 'Analysis unavailable',
+        confidence: 'N/A',
+        product: 'Contact agronomist',
+        detail: 'Could not connect to AI Vision service. Check network and try again.'
+      });
+      setPhase('result');
+    }
+  };
+
+  const handleClose = () => {
+    stopCamera();
+    setOpen(false);
+    setPhase('idle');
+    setResult(null);
+    setCamError('');
+  };
+
+  const handleOpen = () => { setOpen(true); startCamera(); };
+
+  return (
+    <>
+      {/* FAB trigger */}
+      <div
+        onClick={handleOpen}
+        role="button"
+        aria-label="Open crop scanner"
         style={{
-          position: 'fixed', bottom: '20px', left: '20px', zIndex: 1000,
-          width: '60px', height: '60px', borderRadius: '50%',
+          position: 'fixed', bottom: '90px', right: '16px', zIndex: 1000,
+          width: '56px', height: '56px', borderRadius: '50%',
           background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 15px rgba(239,68,68,0.4)', cursor: 'pointer',
-          border: '2px solid rgba(255,255,255,0.2)'
+          boxShadow: '0 4px 20px rgba(239,68,68,0.45)', cursor: 'pointer',
+          border: '2px solid rgba(255,255,255,0.25)',
+          willChange: 'transform',
+          transition: 'transform 0.15s ease, box-shadow 0.15s ease'
         }}
+        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
+        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+          <circle cx="12" cy="13" r="3"></circle>
+        </svg>
       </div>
 
-      {/* Crop Scanner Modal */}
-      {(isScanning || scanResult) && (
+      {/* Scanner Modal */}
+      {open && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.9)', zIndex: 2000,
+          position: 'fixed', inset: 0, zIndex: 2000,
+          background: 'rgba(0,0,0,0.95)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: '2rem'
-        }} onClick={() => { if(scanResult) setScanResult(null); }}>
-          
-          {isScanning ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ width: '250px', height: '250px', border: '2px solid #ef4444', borderRadius: '20px', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: '#ef4444', animation: 'scan 1.5s infinite linear', boxShadow: '0 0 10px #ef4444' }}></div>
+          padding: '1.5rem', animation: 'modalIn 0.2s ease'
+        }}>
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+          {/* Camera Phase */}
+          {phase === 'camera' && (
+            <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', background: '#000', aspectRatio: '4/3' }}>
+                <video ref={videoRef} autoPlay playsInline muted
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+                {/* Targeting overlay */}
+                <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+                  <div style={{ position: 'absolute', top: '20%', left: '20%', right: '20%', bottom: '20%',
+                    border: '2px solid rgba(0,166,90,0.8)', borderRadius: '8px',
+                    boxShadow: '0 0 0 9999px rgba(0,0,0,0.4)' }} />
+                  <div style={{ position: 'absolute', top: '20%', left: '20%', right: '20%', height: '3px',
+                    background: 'linear-gradient(90deg, transparent, #00a65a, transparent)',
+                    animation: 'scan 2s ease-in-out infinite' }} />
+                </div>
               </div>
-              <h3 className="mt-4 font-bold pulse-animation" style={{ color: '#fff', fontSize: '1.25rem' }}>Analyzing Crop Image...</h3>
-              <p className="text-muted">Connecting to Vision AI Model</p>
+              <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem' }}>Point camera at the affected leaf or crop area</p>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button onClick={handleClose} style={{ flex: 1, padding: '0.9rem', borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}>
+                  Cancel
+                </button>
+                <button onClick={handleCapture} style={{ flex: 2, padding: '0.9rem', borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #00a65a, #00c853)',
+                  border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', fontSize: '1rem',
+                  boxShadow: '0 4px 15px rgba(0,166,90,0.4)' }}>
+                  📸 Capture & Analyze
+                </button>
+              </div>
             </div>
-          ) : (
-            <div className="card" style={{ width: '100%', maxWidth: '350px', background: 'linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(15, 23, 42, 0.9))', border: '1px solid rgba(239, 68, 68, 0.3)' }} onClick={e => e.stopPropagation()}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem', color: '#fca5a5' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                <h3 className="font-extrabold" style={{ fontSize: '1.25rem', margin: 0 }}>Analysis Complete</h3>
+          )}
+
+          {/* Analyzing Phase */}
+          {phase === 'analyzing' && (
+            <div style={{ textAlign: 'center', color: '#fff' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%',
+                border: '3px solid rgba(0,166,90,0.3)', borderTopColor: '#00a65a',
+                animation: 'spin 0.8s linear infinite', margin: '0 auto 1.5rem' }} />
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>Analyzing Crop...</div>
+              <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>AI Vision model is processing your image</div>
+            </div>
+          )}
+
+          {/* Result Phase */}
+          {phase === 'result' && result && (
+            <div style={{ width: '100%', maxWidth: '380px', background: 'rgba(15,23,42,0.98)',
+              borderRadius: '20px', padding: '1.75rem', border: '1px solid rgba(255,255,255,0.1)',
+              animation: 'slideUp 0.3s ease' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.25rem' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%',
+                  background: result.disease === 'Analysis unavailable' ? 'rgba(239,68,68,0.2)' : 'rgba(0,166,90,0.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
+                  {result.disease === 'Analysis unavailable' ? '⚠️' : '🔬'}
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>AI Vision Analysis</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>{result.disease}</div>
+                </div>
               </div>
-              
-              <div className="mb-4">
-                <div className="text-sm text-muted mb-1">Detected Issue</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff' }}>{scanResult.disease}</div>
-                <div className="text-sm font-bold mt-1" style={{ color: '#fca5a5' }}>Confidence: {scanResult.confidence}</div>
+
+              {result.confidence !== 'N/A' && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>Confidence</span>
+                    <span style={{ fontSize: '0.8rem', color: '#6ee7b7', fontWeight: 800 }}>{result.confidence}</span>
+                  </div>
+                  <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px' }}>
+                    <div style={{ height: '100%', width: result.confidence, background: 'linear-gradient(90deg, #00a65a, #6ee7b7)', borderRadius: '3px', transition: 'width 0.8s ease' }} />
+                  </div>
+                </div>
+              )}
+
+              {result.detail && (
+                <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '1rem', lineHeight: 1.6 }}>{result.detail}</p>
+              )}
+
+              <div style={{ background: 'rgba(0,166,90,0.12)', border: '1px solid rgba(0,166,90,0.3)',
+                borderRadius: '12px', padding: '1rem', marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.7rem', color: '#6ee7b7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Recommended Action</div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff' }}>{result.product}</div>
+                {result.action && <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>{result.action}</div>}
               </div>
-              
-              <div style={{ background: 'rgba(0, 166, 90, 0.15)', border: '1px solid rgba(0, 166, 90, 0.3)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem' }}>
-                <div className="text-sm font-bold text-success mb-1">Next Best Action</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>Apply {scanResult.product}</div>
-              </div>
-              
-              <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setScanResult(null)}>
-                Close
+
+              <button onClick={handleClose} style={{ width: '100%', padding: '0.9rem', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #00a65a, #00c853)',
+                border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer', fontSize: '1rem',
+                boxShadow: '0 4px 15px rgba(0,166,90,0.35)' }}>
+                Done
               </button>
+            </div>
+          )}
+
+          {/* Camera error */}
+          {camError && (
+            <div style={{ maxWidth: '340px', textAlign: 'center', padding: '2rem' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📵</div>
+              <div style={{ color: '#fca5a5', fontWeight: 700, marginBottom: '1rem' }}>{camError}</div>
+              <button onClick={handleClose} style={{ padding: '0.8rem 2rem', borderRadius: '12px',
+                background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)',
+                color: '#fff', fontWeight: 700, cursor: 'pointer' }}>Close</button>
             </div>
           )}
         </div>
       )}
-
-    </div>
+    </>
   );
 }
 

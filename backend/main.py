@@ -45,6 +45,80 @@ def health_check():
         }
     }
 
+# ─── Crop Scanner (Gemini Vision) ──────────────────────────────────────────────
+@app.post("/api/scan-crop")
+async def scan_crop(payload: dict = Body(...)):
+    """
+    Receives a base64-encoded JPEG captured from the device camera.
+    Sends to Gemini Vision for crop disease / pest identification.
+    Returns: { disease, confidence, product, action, detail }
+    """
+    import base64
+
+    image_b64 = payload.get("image_base64", "")
+    if not image_b64:
+        raise HTTPException(status_code=400, detail="No image data provided")
+
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        # Informative fallback — never lie with fake results
+        return {
+            "disease": "AI Vision Not Configured",
+            "confidence": "N/A",
+            "product": "Please configure GEMINI_API_KEY",
+            "action": "Contact your Syngenta agronomist for manual diagnosis.",
+            "detail": "GEMINI_API_KEY environment variable is not set. Real image analysis requires Gemini API access."
+        }
+
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-1.5-flash-latest")
+
+        prompt = """You are an expert agricultural plant pathologist for Syngenta India.
+Analyze this crop image and identify any visible disease, pest damage, or nutrient deficiency.
+
+Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
+{
+  "disease": "<disease or issue name, or 'No disease detected'>",
+  "confidence": "<percentage like 87%>",
+  "product": "<specific Syngenta product to recommend>",
+  "action": "<one concrete action sentence for the field rep>",
+  "detail": "<1-2 sentences on severity and urgency>"
+}
+
+Focus on: Early Blight, Late Blight, Powdery Mildew, Downy Mildew, Leaf Rust, Aphids, Whitefly, nutrient deficiency.
+Syngenta products to recommend: Amistar Top (fungal), Score 250 EC (fungal), Karate Zeon (insects), Voliam Targo (broad), Axial 50 EC (weeds), Cruiser 350 FS (seed treatment).
+If image is unclear or not a crop, say disease = "Image unclear — please recapture" and confidence = "N/A"."""
+
+        image_part = {
+            "inline_data": {
+                "mime_type": "image/jpeg",
+                "data": image_b64
+            }
+        }
+
+        response = model.generate_content([prompt, image_part])
+        text = response.text.strip()
+
+        # Strip markdown code fences if present
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+
+        import json as _json
+        result = _json.loads(text)
+        return result
+
+    except Exception as e:
+        return {
+            "disease": "Analysis Error",
+            "confidence": "N/A",
+            "product": "Contact agronomist",
+            "action": "Manual crop inspection recommended.",
+            "detail": f"Vision API error: {str(e)[:120]}"
+        }
+
 # ─── Visits ────────────────────────────────────────────────────────────────────
 @app.get("/api/visits")
 def get_visits(db: Session = Depends(get_db)):
