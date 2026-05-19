@@ -12,7 +12,7 @@ load_dotenv()
 app = FastAPI(
     title="AgriSense Field Co-Pilot API",
     description="AI-driven field force intelligence for Syngenta reps and managers.",
-    version="2.0.0"
+    version="3.0.0"
 )
 
 # Setup CORS for React frontend
